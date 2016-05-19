@@ -61,7 +61,7 @@ function contains(arr) {
 
 
 function keydownEventHandler(e) {
-	if (e.keyCode == 32) {
+	if (e.keyCode == 81) {
 		acceleration *= -1;
 	}
 }
