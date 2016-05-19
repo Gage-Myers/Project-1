@@ -1,35 +1,83 @@
+/*
+  Project 1: Moon lander
+  Author: Gag Myers
+*/
+
+var acceleration = .5;
+var ast_arr = [];
+
 var gameport = document.getElementById('gameport');
 
-var renderer = PIXI.autoDetectRenderer(400,400, {backgroundColor: 0x3344ee});
+var renderer = PIXI.autoDetectRenderer(800,400, {backgroundColor: 0x0});
 gameport.appendChild(renderer.view);
+
 
 var stage = new PIXI.Container();
 
-var texture_player = PIXI.Texture.fromImage("../images/Character.png");
+var ship = new PIXI.Sprite(PIXI.Texture.fromImage("../images/Ship.png"));
 
-var player = new PIXI.Sprite(texture_player);
+for (var i = 0; i < Math.floor((Math.random() * 10) + 50); i++) {
+	var asteroid = new PIXI.Sprite(PIXI.Texture.fromImage("../images/Moon.png"));
+	stage.addChild(asteroid);
+	asteroid.anchor.x = 0.5;
+	asteroid.anchor.y = 0.5;
 
-var texture_trophy = PIXI.Texture.fromImage("../images/Win.png");
+	asteroid.position.x = Math.floor((Math.random() * 800) + 50);
+	asteroid.position.y = Math.floor((Math.random() * 800) + 50);
+	asteroid.scale.set(0.25,0.25);
 
-var trophy = new PIXI.Sprite(texture_trophy);
+	ast_arr.push(asteroid);
+}
 
-player.anchor.x = 0.5;
-player.anchor.y = 0.5;
+stage.addChild(ship);
 
-trophy.anchor.x = 0.5;
-trophy.anchor.y = 0.5;
+ship.anchor.x = 0.5;
+ship.anchor.y = 0.5;
 
-player.position.x = 200;
-player.position.y = 200;
+ship.position.x = 0;
+ship.position.y = 50;
 
-trophy.position.x = 50;
-trophy.position.y = 50;
+ship.scale.set(0.5,0.5);
 
-stage.addChild(player);
-stage.addChild(trophy);
+function isIntersecting(player,ast) {
+	return !((ast.position.x + ast.width) > (player.position.x + player.width) || 
 
+           (ast.position.x + ast.width) < (player.position.x + player.width) || 
+
+           (ast.position.y - ast.height) > (player.position.y - player.height) ||
+
+           (ast.position.y - ast.height) < (player.position.y - player.height));
+}
+
+
+function contains(arr) {
+    for (var i = 0; i < arr.length; i++) {
+        if (isIntersecting(ship, arr[i]) ) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+function keydownEventHandler(e) {
+	if (e.keyCode == 32) {
+		acceleration *= -1;
+	}
+}
+
+document.addEventListener('keydown', keydownEventHandler);
 function animate() {
 	requestAnimationFrame(animate);
+
+	if (contains(ast_arr)) {
+		ship.position.x += 0;
+		ship.position.y += 0;
+	} else {
+		ship.position.x += .75;
+		ship.position.y += acceleration;
+	}
+
 	renderer.render(stage);
 }
 
